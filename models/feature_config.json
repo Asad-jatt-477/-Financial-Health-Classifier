@@ -1,0 +1,70 @@
+{
+  "target": "target_next_quarter_health",
+  "classes": {
+    "0": "At-Risk",
+    "1": "Healthy"
+  },
+  "positive_class_probability": "predict_proba[:, 1] = P(Healthy)",
+  "threshold": 0.5,
+  "features_numeric_binary": [
+    "current_ratio",
+    "cash_ratio",
+    "debt_to_equity",
+    "debt_to_assets",
+    "operating_margin",
+    "roa",
+    "roe",
+    "asset_turnover",
+    "revenue_growth_qoq",
+    "netincome_growth_qoq",
+    "assets_growth_qoq",
+    "is_annual_filing",
+    "has_inventory"
+  ],
+  "use_industry_sector": true,
+  "sector_categories": [
+    "Agriculture",
+    "Construction",
+    "Finance_RealEstate",
+    "Manufacturing",
+    "Mining",
+    "Retail",
+    "Services",
+    "Transport_Utilities",
+    "Wholesale"
+  ],
+  "feature_columns": [
+    "current_ratio",
+    "cash_ratio",
+    "debt_to_equity",
+    "debt_to_assets",
+    "operating_margin",
+    "roa",
+    "roe",
+    "asset_turnover",
+    "revenue_growth_qoq",
+    "netincome_growth_qoq",
+    "assets_growth_qoq",
+    "is_annual_filing",
+    "has_inventory",
+    "sector_Agriculture",
+    "sector_Construction",
+    "sector_Finance_RealEstate",
+    "sector_Manufacturing",
+    "sector_Mining",
+    "sector_Retail",
+    "sector_Services",
+    "sector_Transport_Utilities",
+    "sector_Wholesale"
+  ],
+  "hyperparameters": {},
+  "trained_on": {
+    "n_rows": 27836,
+    "n_companies": 3922,
+    "note": "Sirf train companies (test companies model ne kabhi nahi dekhin)."
+  },
+  "versions": {
+    "python": "3.14.4",
+    "scikit_learn": "1.8.0"
+  }
+}

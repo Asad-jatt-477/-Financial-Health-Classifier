@@ -1,0 +1,19 @@
+Dataset: 58,241 rows, 7,582 unique companies, 79 columns
+Quarters: ['2024q1', '2024q2', '2024q3', '2024q4', '2025q1', '2025q2', '2025q3', '2025q4', '2026q1', '2026q2']
+
+MISSINGNESS:
+  - Range: 0.7% to 79.5% across 22 metrics
+  - CONFIRMED structural/industry-driven (InventoryNet: Banks vs Pharma ki missingness bohat alag -- chart dekhein)
+
+DISTRIBUTION SHAPE:
+  - All metrics heavily right-skewed (skewness up to 71.9) -- log-transform justified
+
+OUTLIERS (recap from 05):
+  - Flagged but NOT treated on raw columns (to avoid ratio-distortion, per JPMorgan test)
+
+PANEL STRUCTURE:
+  - 7,183 companies (94.7%) have 2+ periods -- usable for forward-looking target in 07
+  - 399 companies (5.3%) have only 1 period -- will be excluded
+
+MULTICOLLINEARITY (preview for 10):
+  - 41 column-pairs with |correlation| > 0.8 identified

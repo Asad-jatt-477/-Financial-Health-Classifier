@@ -1,13 +1,15 @@
 # 📈 Cross-Industry Corporate Financial Health Classifier
 
-**A binary classification system that predicts whether a publicly-traded company will be Healthy or At-Risk next quarter — built end-to-end on 10 quarters of raw SEC regulatory filings, using only information genuinely available in the company's current filing.**
+**A binary classification system that predicts whether a publicly-traded company will be Healthy or At-Risk next quarter — built end-to-end on 10 quarters of raw SEC regulatory filings, deployed as a live FastAPI-backed web app, using only information genuinely available in the company's current filing.**
 
-![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-1.8.0-F7931E?logo=scikitlearn&logoColor=white)
-![pandas](https://img.shields.io/badge/pandas-Parquet-150458?logo=pandas&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-Live%20Demo-FF4B4B?logo=streamlit&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Deployment--Ready-1E8E5A)
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
+<p>
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white">
+  <img alt="scikit-learn" src="https://img.shields.io/badge/scikit--learn-1.8.0-F7931E?logo=scikitlearn&logoColor=white">
+  <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-Live%20API-009688?logo=fastapi&logoColor=white">
+  <img alt="Vercel" src="https://img.shields.io/badge/Vercel-Deployed-000000?logo=vercel&logoColor=white">
+  <img alt="Status" src="https://img.shields.io/badge/Status-Deployment--Ready-1E8E5A">
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-lightgrey">
+</p>
 
 ---
 
@@ -17,7 +19,7 @@ The **Cross-Industry Corporate Financial Health Classifier** turns 10 quarters (
 
 Unlike a typical modeling exercise that stops at reporting an accuracy number, this project's central contribution is a **rigorous root-cause investigation** into two data-quality bugs hidden inside the raw regulatory data, and the disciplined decision to drop a regression target once evidence showed it was learning a reporting-calendar artifact rather than real financial signal — rather than reporting an inflated metric.
 
-The system is implemented as a complete, 13-stage end-to-end pipeline rather than a notebook exercise: data engineering, leakage-safe feature engineering, model training, statistical evaluation, and a deployed interactive Streamlit application are all implemented and working together.
+The project was built as a complete, end-to-end system rather than a notebook exercise: data engineering, leakage-safe feature engineering, model training, statistical evaluation, and a deployed interactive web application are all implemented and working together as a single pipeline.
 
 ## Problem Statement
 
@@ -28,7 +30,7 @@ Predicting corporate financial health from regulatory filings faces a recurring 
 - **A naive train/test split leaks company identity.** Each company appears many times across quarters — a careless split lets the same company's data appear in both train and test, overstating real-world performance.
 - **A model that looks strong can be riding a near-tautological signal without being technically wrong.** If the prediction target is itself defined from two ratios, a model that leans heavily on those same two ratios isn't cheating — but it needs to be explained honestly, not presented as a mysterious multivariate discovery.
 
-What is needed is not just a model, but a transparently-diagnosed, defensible answer to *which* signal the data can actually support.
+A system that reports a headline accuracy without an honest account of *why* it works is not trustworthy — it is a liability waiting to be found out. What is needed is a transparently-diagnosed, defensible answer to *which* signal the data can actually support.
 
 ## Our Solution
 
@@ -40,75 +42,46 @@ The project addresses this through a disciplined, evidence-first workflow rather
 4. **Lock a leakage-safe validation methodology.** A company-grouped `GroupShuffleSplit` (never a random row split) was locked once and reused unchanged through every later stage — winsorization bounds, feature selection, tuning, and final evaluation all respect it.
 5. **Select features on evidence, not intuition.** VIF, drop-one grouped-CV, and grouped permutation importance were used to resolve redundancy and confirm relevance, run on train companies only.
 6. **Explain honestly, including the target's own construction.** The target is built from `current_ratio` and `NetIncomeLoss` thresholds one quarter forward — which directly explains why those two features dominate permutation importance. This is documented, not hidden.
-7. **Deploy it.** The final model, and every number reported about it, is served through a live multi-page Streamlit application rather than left in a notebook.
+7. **Deploy it.** The final model, and every number reported about it, is served through a live FastAPI backend and web frontend rather than left in a notebook.
 
 ## System Architecture
 
-### Diagrammatic Architecture
+![Cross-Industry Financial Health Classifier architecture diagram](architecture-diagram.svg)
 
-```mermaid
-flowchart LR
-    subgraph DATA["📊 DATA ENGINEERING"]
-        direction TB
-        A["Raw SEC Filings\n(sub / num / tag / pre)"] --> B["Load, Join, Pivot\n(currency + duration\nbug fixes)"]
-        B --> C["Cleaning and\nOutlier Detection"]
-        C --> D["Exploratory\nAnalysis"]
-    end
+The diagram above shows the full pipeline the project executes end-to-end, from raw filings to a served prediction. Each stage consumes the previous stage's saved artifact (parquet / JSON), so the pipeline runs reproducibly end-to-end with no manual intervention between steps.
 
-    subgraph FEAT["🧮 FEATURE ENGINEERING"]
-        direction TB
-        E["Ratios, Growth,\nTarget Construction"] --> F["Company-Level\nTrain/Test Lock"]
-        F --> G["Ratio Outlier\nTreatment"]
-    end
+## What Makes This Different
 
-    subgraph MODEL["🧠 MODELING"]
-        direction TB
-        H["Target-Relative EDA +\nFeature Selection\n(VIF + Permutation)"] --> I(["Model Training\nHistGradientBoosting"])
-        I --> J["Validation, Tuning,\nPersistence"]
-    end
+Most "financial ML" portfolio projects fall into one of two categories: a model trained once and reported at face value, or a notebook full of experiments with no account of what was rejected and why. This project is neither.
 
-    subgraph DEPLOY["🚀 DEPLOYMENT"]
-        direction TB
-        K(["Streamlit App\nLive Prediction"])
-    end
+- **Diagnosis comes before modeling.** The duration-mixing bug was caught by a within-company consistency check *before* any model was trained on the corrupted signal — not discovered after the fact by a suspiciously-good result.
+- **Evidence overrides sunk cost.** A regression target the project had already built was dropped entirely once a naive baseline beat it — proof it was learning an artifact, not real signal — rather than being tuned further to paper over the problem.
+- **Leakage-safety is a first-class constraint, not an afterthought.** The company-grouped train/test split is locked once and threaded through every later stage (outlier bounds, feature selection, tuning); it was also empirically tested against a naive row-level split to prove the risk was real, not theoretical.
+- **The model's own behavior is explained, not just reported.** Feature-importance concentration in two ratios is traced directly to the target's own definition and documented — the same transparency a skeptical reviewer would demand.
+- **It is deployed, not just demonstrated.** Every number on the live Performance page is read from the same pipeline artifacts used throughout the project, not hardcoded into a slide.
 
-    DATA --> FEAT --> MODEL --> DEPLOY
+### Scenarios
 
-    classDef dataStage fill:#EAF2FF,stroke:#2C5FAD,color:#1A365D,stroke-width:1.5px
-    classDef featStage fill:#FFF6E5,stroke:#B8860B,color:#4A3B00,stroke-width:1.5px
-    classDef modelStage fill:#E8F7EF,stroke:#1E8E5A,color:#0B4228,stroke-width:1.5px
-    classDef deployStage fill:#FFEAEA,stroke:#D6483F,color:#6B1E1A,stroke-width:1.5px
-    classDef highlight fill:#1E8E5A,stroke:#0B4228,color:#fff,stroke-width:2px
-    classDef highlightDeploy fill:#FF4B4B,stroke:#6B1E1A,color:#fff,stroke-width:2px
+| Scenario | A naive approach | This project |
+|---|---|---|
+| Model leans heavily on 2 features | Reported as an unexplained "key driver" finding | Traced to the target's own construction and documented |
+| Regression target underperforms | Tuned further, or quietly dropped without explanation | Root-caused (reporting-duration bug), fixed at the source, then dropped only after re-confirming |
+| Train/test split | Random row split | Company-grouped split, locked once, verified against a naive split to quantify the leakage risk |
+| Missing values in `current_ratio` | Imputed with mean/median | Left as-is; model's native missing-value handling lets it use the pattern as signal |
 
-    class A,B,C,D dataStage
-    class E,F,G featStage
-    class H,J modelStage
-    class I highlight
-    class K highlightDeploy
-```
+## Final Results
 
-Each stage consumes the previous stage's saved artifact (parquet / JSON), so the pipeline runs reproducibly end-to-end — from raw filings to a served prediction — with no manual intervention between steps.
+| Metric | Value |
+|---|---|
+| Held-out test Accuracy | **87.62%** |
+| Held-out test ROC-AUC | **0.9367** |
+| Balanced Accuracy | 86.53% |
+| Brier Score | 0.0918 |
+| Beats persistence baseline by | +0.092 ROC-AUC |
+| 5-fold CV ROC-AUC (GroupKFold) | 0.9427 ± 0.0036 |
 
-## Key Features
-
-- **Root-cause diagnosis over blind tuning** — a within-company ratio-consistency check surfaced a duration-mixing bug before any model was trained on the corrupted signal.
-- **Two independent bugs caught and fixed** — currency contamination and annual/quarterly duration mixing, both verified on synthetic edge-case data and real filings with zero cell-level discrepancies.
-- **Leakage-safe validation methodology** — a company-grouped train/test split, locked once in feature engineering and reused unchanged through winsorization, feature selection, tuning, and final evaluation.
-- **Evidence-driven target scope** — regression and clustering targets were dropped after a naive calendar baseline beat the regression model, proving it was learning an artifact rather than real signal.
-- **Full transparency on target construction** — the target's own definition (`current_ratio ≥ 1` and `NetIncomeLoss > 0`, one quarter forward) is documented, directly explaining the model's feature-importance concentration rather than leaving it unexplained.
-- **Statistical model evaluation** — baseline comparisons (majority class, persistence, logistic regression), calibration analysis, transition-probability analysis, and sector-level subgroup performance, beyond a single headline metric.
-- **Reproducible, 13-stage pipeline** — every stage resolves its own file paths; sandbox-tested across multiple consecutive rounds for deterministic, bit-identical outputs.
-- **Deployed interactive application** — a live multi-page Streamlit app serves real-time predictions with adjustable sliders, a full model-performance dashboard, feature-insight charts, and a documented limitations page, with every displayed number sourced directly from the pipeline's real artifacts.
-
-## Limitations
-
-- **Feature concentration in `current_ratio` and `roa`** — a direct, expected consequence of the target definition (see *Our Solution*, step 6), not a modeling flaw. The other 9 features provide only marginal refinement over this core persistence signal; a documented candidate for future work is a broader, multi-ratio composite target.
-- **Sector under-representation** — Finance/Real-Estate companies are a small share of the trainable dataset, because banks/REITs don't report a classified balance sheet (`current_ratio` is structurally unavailable for many of them). Predictions for this sector should be treated with reduced confidence.
-- **Small-sample subgroups** — some sectors (Agriculture, Construction, Wholesale) have well under 300 rows in the test set; their subgroup metrics are high-variance and shouldn't be over-interpreted as "best/worst sector" claims.
-- **Point-in-time simplification** — outlier-treatment percentile bounds are computed once from train-company rows (not a strict walk-forward window); leakage-safe with respect to test companies, but not a fully rigorous rolling-time holdout.
-- **Modest accuracy lift over the persistence baseline** — companies rarely flip health state quarter to quarter, so the model's edge is concentrated in ROC-AUC (ranking/probability quality) rather than raw accuracy; this is reported directly rather than only showing the more flattering majority-class comparison.
+Full baseline comparisons, cross-validation results, feature importance, and sector-level subgroup breakdowns are available on the live **Performance** page, rendered directly from `reports/` artifacts.
 
 ## Conclusion
 
-The Cross-Industry Corporate Financial Health Classifier demonstrates a complete, evidence-driven approach to applied machine learning: rather than reporting whatever accuracy a model happens to produce, it investigates *why* two ratios dominate the model's decisions, identifies and fixes two distinct data-quality bugs at their source, locks a leakage-safe validation methodology, and reframes the prediction scope around what the data can honestly support. The result — a held-out test ROC-AUC of 0.9367 on a well-posed, transparently-explained binary question, backed by statistical evaluation, baseline comparisons, and a deployed live application — is a defensible, deployment-ready system, which is the standard a genuinely trustworthy predictive model needs to meet.
+The Cross-Industry Corporate Financial Health Classifier demonstrates a complete, evidence-driven approach to applied machine learning: rather than reporting whatever accuracy a model happens to produce, it investigates *why* two ratios dominate the model's decisions, identifies and fixes two distinct data-quality bugs at their source, locks a leakage-safe validation methodology, and reframes the prediction scope around what the data can honestly support. The result — a held-out test ROC-AUC of 0.9367 on a well-posed, transparently-explained binary question, backed by statistical evaluation and a deployed live application — is a defensible, deployment-ready system, which is the standard a genuinely trustworthy predictive model needs to meet.

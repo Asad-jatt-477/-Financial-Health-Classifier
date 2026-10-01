@@ -1,0 +1,72 @@
+{
+  "dataset": {
+    "n_companies": 4903,
+    "n_train_companies": 3922,
+    "n_train_rows": 27836,
+    "n_test_companies": 981,
+    "n_test_rows": 7050,
+    "healthy_share_test": 0.347
+  },
+  "test": {
+    "majority": {"accuracy": 0.6532, "roc_auc": 0.5},
+    "persistence": {"accuracy": 0.86, "roc_auc": 0.8449},
+    "model": {"accuracy": 0.8762, "balanced_accuracy": 0.8653, "roc_auc": 0.9367, "brier": 0.0918, "calibration_gap": 0.0117}
+  },
+  "cv": {
+    "folds": 5,
+    "scheme": "GroupKFold by company (train companies only)",
+    "table": {
+      "Majority": {"auc_mean": 0.5, "auc_std": 0.0, "acc_mean": 0.6482, "acc_std": 0.0146},
+      "Persistence": {"auc_mean": 0.8573, "auc_std": 0.0069, "acc_mean": 0.8718, "acc_std": 0.0068},
+      "LogisticRegression": {"auc_mean": 0.8184, "auc_std": 0.0013, "acc_mean": 0.7476, "acc_std": 0.007},
+      "HGB (default)": {"auc_mean": 0.9427, "auc_std": 0.0036, "acc_mean": 0.8857, "acc_std": 0.0055}
+    }
+  },
+  "tuning": {
+    "method": "RandomizedSearchCV (n_iter=12, cv=GroupKFold(3), scoring=roc_auc)",
+    "tuned_5fold_auc": 0.9428,
+    "default_5fold_auc": 0.9427,
+    "paired_diff": 0.0001,
+    "paired_se": 0.0002,
+    "adopted_tuned_params": false
+  },
+  "transition_matrix": {
+    "at_risk_stays_at_risk": 0.904,
+    "healthy_stays_healthy": 0.824
+  },
+  "early_warning": {
+    "description": "Currently Healthy -> flags risk of falling to At-Risk next quarter",
+    "n_rows": 2432, "base_rate": 0.20, "top_decile_precision": 0.643,
+    "top_decile_recall": 0.322, "lift": 3.21, "within_group_auc": 0.803
+  },
+  "recovery": {
+    "description": "Currently At-Risk -> flags likely recovery to Healthy next quarter",
+    "n_rows": 4540, "base_rate": 0.103, "top_decile_precision": 0.434,
+    "lift": 4.20, "within_group_auc": 0.846
+  },
+  "permutation_importance": [
+    {"feature": "current_ratio", "importance": 0.188},
+    {"feature": "roa", "importance": 0.165},
+    {"feature": "operating_margin", "importance": 0.025},
+    {"feature": "netincome_growth_qoq", "importance": 0.019},
+    {"feature": "industry_sector", "importance": 0.004},
+    {"feature": "debt_to_equity", "importance": 0.002},
+    {"feature": "revenue_growth_qoq", "importance": 0.001},
+    {"feature": "debt_to_assets", "importance": 0.001},
+    {"feature": "roe", "importance": 0.001},
+    {"feature": "asset_turnover", "importance": 0.0005},
+    {"feature": "cash_ratio", "importance": 0.0003},
+    {"feature": "assets_growth_qoq", "importance": 0.0002},
+    {"feature": "is_annual_filing", "importance": 0.0001},
+    {"feature": "has_inventory", "importance": 0.0}
+  ],
+  "feature_concentration_note": "current_ratio and roa dominate because the target itself is defined from current_ratio and NetIncomeLoss one quarter forward — this is expected given the target's own construction, not a modeling flaw. See README for the full explanation.",
+  "subgroup_performance": [
+    {"sector": "Manufacturing", "n": 3440, "accuracy": 0.884, "roc_auc": 0.943},
+    {"sector": "Finance_RealEstate", "n": 669, "accuracy": 0.857, "roc_auc": 0.925},
+    {"sector": "Services", "n": 1501, "accuracy": 0.875, "roc_auc": 0.933},
+    {"sector": "Wholesale", "n": 173, "accuracy": 0.804, "roc_auc": 0.880},
+    {"sector": "Agriculture", "n": 72, "accuracy": 0.847, "roc_auc": 0.888},
+    {"sector": "Construction", "n": 68, "accuracy": 0.941, "roc_auc": 0.937}
+  ]
+}

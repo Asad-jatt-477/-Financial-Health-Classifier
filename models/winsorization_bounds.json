@@ -1,0 +1,54 @@
+{
+  "current_ratio": {
+    "pos_upper": 35.330596923828125,
+    "neg_lower": null
+  },
+  "cash_ratio": {
+    "pos_upper": 22.709190196990942,
+    "neg_lower": null
+  },
+  "debt_to_equity": {
+    "pos_upper": 41.485914001464906,
+    "neg_lower": -96.932431640625
+  },
+  "debt_to_assets": {
+    "pos_upper": 107.71070190429668,
+    "neg_lower": null
+  },
+  "gross_margin": {
+    "pos_upper": 1.0,
+    "neg_lower": -241.6672871398926
+  },
+  "operating_margin": {
+    "pos_upper": 0.7210750246047982,
+    "neg_lower": -1472.1574121093747
+  },
+  "net_profit_margin": {
+    "pos_upper": 13.28186336517334,
+    "neg_lower": -1610.1850695800783
+  },
+  "roa": {
+    "pos_upper": 0.4888838529586792,
+    "neg_lower": -30.699262409210203
+  },
+  "roe": {
+    "pos_upper": 4.383483247756906,
+    "neg_lower": -8.147386837005614
+  },
+  "asset_turnover": {
+    "pos_upper": 1.2099999523162837,
+    "neg_lower": -0.34007716178894043
+  },
+  "revenue_growth_qoq": {
+    "pos_upper": 12.771928939819396,
+    "neg_lower": -1.0
+  },
+  "netincome_growth_qoq": {
+    "pos_upper": 50.56159210205079,
+    "neg_lower": -40.0532137298584
+  },
+  "assets_growth_qoq": {
+    "pos_upper": 107.2352845764148,
+    "neg_lower": -0.822144672870636
+  }
+}

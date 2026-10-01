@@ -1,0 +1,79 @@
+{
+  "generated_by": "10_feature_selection.ipynb",
+  "target": "target_next_quarter_health",
+  "selection_set": {
+    "n_companies": 3922,
+    "n_rows": 27836,
+    "seed": 42,
+    "note": "Sirf train companies (company_split.json). Test companies ki koi row is analysis mein istemal nahi hui."
+  },
+  "candidate_ratio_growth_features": [
+    "current_ratio",
+    "cash_ratio",
+    "debt_to_equity",
+    "debt_to_assets",
+    "gross_margin",
+    "operating_margin",
+    "net_profit_margin",
+    "roa",
+    "roe",
+    "asset_turnover",
+    "revenue_growth_qoq",
+    "netincome_growth_qoq",
+    "assets_growth_qoq"
+  ],
+  "selected_ratio_growth_features": [
+    "current_ratio",
+    "cash_ratio",
+    "debt_to_equity",
+    "debt_to_assets",
+    "operating_margin",
+    "roa",
+    "roe",
+    "asset_turnover",
+    "revenue_growth_qoq",
+    "netincome_growth_qoq",
+    "assets_growth_qoq"
+  ],
+  "selected_binary_context_features": [
+    "is_annual_filing",
+    "has_inventory"
+  ],
+  "use_industry_sector": true,
+  "sector_categories": [
+    "Agriculture",
+    "Construction",
+    "Finance_RealEstate",
+    "Manufacturing",
+    "Mining",
+    "Retail",
+    "Services",
+    "Transport_Utilities",
+    "Wholesale"
+  ],
+  "dropped_units": {
+    "net_profit_margin": "Redundant (VIF > threshold) aur nikalne se performance noise ke andar rahi",
+    "gross_margin": "Kam relevance: importance fold-noise ke andar, aur nikalne (joint) se performance noise ke andar rahi"
+  },
+  "redundant_but_kept": [],
+  "vif_threshold": 5.0,
+  "vif_primary_method": "pairwise-correlation",
+  "vif_final": {
+    "current_ratio": 3.149,
+    "cash_ratio": 3.139,
+    "debt_to_equity": 1.167,
+    "debt_to_assets": 2.431,
+    "operating_margin": 1.065,
+    "roa": 2.462,
+    "roe": 1.171,
+    "asset_turnover": 1.076,
+    "revenue_growth_qoq": 1.031,
+    "netincome_growth_qoq": 1.008,
+    "assets_growth_qoq": 1.034
+  },
+  "selection_cv": {
+    "auc_baseline": 0.9424,
+    "auc_final": 0.9427,
+    "auc_fold_std_final": 0.0033
+  }
+}

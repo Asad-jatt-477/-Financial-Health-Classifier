@@ -1,0 +1,77 @@
+{
+  "generated_by": "11_modeling.ipynb",
+  "target": "target_next_quarter_health",
+  "features_numeric_binary": [
+    "current_ratio",
+    "cash_ratio",
+    "debt_to_equity",
+    "debt_to_assets",
+    "operating_margin",
+    "roa",
+    "roe",
+    "asset_turnover",
+    "revenue_growth_qoq",
+    "netincome_growth_qoq",
+    "assets_growth_qoq",
+    "is_annual_filing",
+    "has_inventory"
+  ],
+  "sector_dummies_used": true,
+  "n_train_rows": 27836,
+  "n_test_rows": 7050,
+  "n_train_companies": 3922,
+  "n_test_companies": 981,
+  "healthy_share_train": 0.3518,
+  "healthy_share_test": 0.3468,
+  "model": "HistGradientBoostingClassifier(default params, random_state=42)",
+  "train": {
+    "accuracy": 0.8992,
+    "roc_auc": 0.9583
+  },
+  "test": {
+    "majority": {
+      "accuracy": 0.6532,
+      "balanced_accuracy": 0.5,
+      "f1_healthy": 0.0,
+      "f1_atrisk": 0.7902,
+      "roc_auc": 0.5
+    },
+    "persistence": {
+      "accuracy": 0.86,
+      "balanced_accuracy": 0.8449,
+      "f1_healthy": 0.7976,
+      "f1_atrisk": 0.893,
+      "roc_auc": 0.8449
+    },
+    "model": {
+      "accuracy": 0.8762,
+      "balanced_accuracy": 0.8653,
+      "f1_healthy": 0.823,
+      "f1_atrisk": 0.9048,
+      "roc_auc": 0.9367
+    },
+    "brier": 0.0918,
+    "calibration_gap": 0.0117
+  },
+  "status_change": {
+    "n_changed_rows": 956,
+    "model_acc_on_changed": 0.2165,
+    "model_acc_on_unchanged": 0.9815
+  },
+  "early_warning_currently_healthy": {
+    "n_rows": 2432,
+    "base_rate": 0.2002,
+    "top_decile_rate": 0.6434,
+    "lift": 3.2132,
+    "capture": 0.3224,
+    "auc": 0.8031
+  },
+  "recovery_currently_atrisk": {
+    "n_rows": 4540,
+    "base_rate": 0.1033,
+    "top_decile_rate": 0.4339,
+    "lift": 4.2004,
+    "capture": 0.42,
+    "auc": 0.8459
+  }
+}

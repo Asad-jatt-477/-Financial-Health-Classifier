@@ -1,0 +1,26 @@
+# Raw & intermediate data - regenerate locally, see README
+data/raw/
+data/processed/
+
+# Python / Jupyter junk
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Logs / temp
+*.log
+*.tmp

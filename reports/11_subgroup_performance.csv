@@ -1,0 +1,14 @@
+group,n,healthy_share,model_acc,persist_acc,model_auc
+T+1 = annual filing,1575,0.348,0.8914,0.8832,0.9577
+T+1 = quarterly filing,5475,0.346,0.8718,0.8533,0.9308
+Revenue MAUJOOD,5407,0.394,0.8585,0.8446,0.9264
+Revenue MISSING,1643,0.193,0.9343,0.9105,0.9545
+sector: Agriculture,72,0.306,0.8472,0.7778,0.8882
+sector: Construction,68,0.544,0.9412,0.8529,0.9372
+sector: Finance_RealEstate,669,0.327,0.8565,0.8132,0.925
+sector: Manufacturing,3440,0.346,0.8837,0.8727,0.9428
+sector: Mining,298,0.302,0.8792,0.8557,0.9309
+sector: Retail,339,0.366,0.8938,0.8702,0.9537
+sector: Services,1501,0.332,0.8754,0.8674,0.9334
+sector: Transport_Utilities,490,0.314,0.8592,0.849,0.9051
+sector: Wholesale,173,0.647,0.8035,0.7803,0.8803

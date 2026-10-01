@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Performance — Financial Health Classifier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <header class="masthead">
+    <a href="index.html" class="brand"><span class="mark">F</span><span class="wordmark">Financial Health Classifier</span></a>
+    <nav class="primary">
+      <a href="index.html">Overview</a>
+      <a href="predict.html">Live Prediction</a>
+      <a href="performance.html" class="active">Performance</a>
+    </nav>
+  </header>
+
+  <h1>Model Performance</h1>
+  <p>Every number on this page is read live from <code>/api/metrics</code> — the same pipeline artifacts used throughout this project, not hardcoded into the page.</p>
+
+  <div class="stat-strip" id="headline"></div>
+
+  <h2>Baseline comparison (held-out test set)</h2>
+  <p>A model is only useful if it beats simple baselines — including the strong <em>persistence</em> baseline ("assume next quarter looks like this one").</p>
+  <div class="chart-row" id="baseline-charts"></div>
+  <table class="data-table" id="baseline-table">
+    <thead><tr><th>Model</th><th class="num">Accuracy</th><th class="num">ROC-AUC</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>5-fold cross-validation (GroupKFold, train companies)</h2>
+  <p>Error bars show ±1 standard deviation across the 5 folds.</p>
+  <div class="chart-row" id="cv-chart"></div>
+  <table class="data-table" id="cv-table">
+    <thead><tr><th>Model</th><th class="num">ROC-AUC</th><th class="num">Accuracy</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Transition analysis</h2>
+  <p id="transition-text"></p>
+  <div class="ledger-row"><span class="label">Early warning — top-decile lift over base rate</span><span class="value tabular" id="ew-lift"></span></div>
+  <div class="ledger-row"><span class="label">Recovery — top-decile lift over base rate</span><span class="value tabular" id="rec-lift"></span></div>
+
+  <h2>Feature importance (permutation, test set)</h2>
+  <p>Mean drop in ROC-AUC when a feature is randomly shuffled — larger means the model relies on it more.</p>
+  <p class="note" id="concentration-note"></p>
+  <div id="importance-chart"></div>
+
+  <h2>Subgroup performance by sector</h2>
+  <table class="data-table" id="subgroup-table">
+    <thead><tr><th>Sector</th><th class="num">n</th><th class="num">Accuracy</th><th class="num">ROC-AUC</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p class="note">Sectors with small <em>n</em> have statistically noisy estimates — don't over-interpret as "best/worst sector" claims.</p>
+
+  <p class="note">Model: HistGradientBoostingClassifier, default hyperparameters (tuning gain was within statistical noise).</p>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand"><span class="mark">F</span>Financial Health Classifier</div>
+        <p>A binary classifier trained on 10 quarters of SEC regulatory filings, predicting next-quarter financial health from a company's own ratios.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="predict.html">Live Prediction</a></li>
+          <li><a href="performance.html">Performance</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Project</h4>
+        <ul>
+          <li><a href="https://www.sec.gov/data/financial-statement-data-sets" target="_blank" rel="noopener">SEC Data Source ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Ahmad Shahzad</span>
+      <span>Data: U.S. SEC Financial Statement Data Sets — public, unrestricted</span>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+function fmtPct(x) { return (x * 100).toFixed(2) + "%"; }
+
+async function render() {
+  const m = await loadJSON("/api/metrics");
+
+  const icon = p => `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${p}</svg>`;
+  const ICONS = {
+    acc: '<path d="M3 17l6-6 4 4 8-8M21 7v6h-6"/>',
+    auc: '<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>',
+    bal: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>',
+    brier: '<circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/>',
+  };
+  document.getElementById("headline").innerHTML = `
+    <div class="stat">${icon(ICONS.acc)}<span class="num tabular">${fmtPct(m.test.model.accuracy)}</span><span class="lbl">Test accuracy</span></div>
+    <div class="stat">${icon(ICONS.auc)}<span class="num tabular">${m.test.model.roc_auc.toFixed(4)}</span><span class="lbl">Test ROC-AUC</span></div>
+    <div class="stat">${icon(ICONS.bal)}<span class="num tabular">${fmtPct(m.test.model.balanced_accuracy)}</span><span class="lbl">Balanced accuracy</span></div>
+    <div class="stat">${icon(ICONS.brier)}<span class="num tabular">${m.test.model.brier.toFixed(4)}</span><span class="lbl">Brier score</span></div>
+  `;
+
+  const baseRows = [
+    ["Majority class", m.test.majority],
+    ["Persistence baseline", m.test.persistence],
+    ["Final model (HGB)", m.test.model],
+  ];
+  document.querySelector("#baseline-table tbody").innerHTML = baseRows.map(([name, d], i) => `
+    <tr${i === 2 ? ' class="highlight"' : ''}><td>${name}</td><td class="num tabular">${fmtPct(d.accuracy)}</td><td class="num tabular">${d.roc_auc.toFixed(4)}</td></tr>
+  `).join("");
+
+  const baseColors = ["#B8B09A", "#8A95A6", "#2F7D6B"];
+  const baseLabels = ["Majority", "Persistence", "Final model"];
+  document.getElementById("baseline-charts").innerHTML = `
+    <div class="chart-card">
+      ${vBarChart(baseRows.map(([,d],i) => ({label: baseLabels[i], value: d.accuracy, color: baseColors[i]})), {max: 1, format: fmtPct, title: "Accuracy"})}
+    </div>
+    <div class="chart-card">
+      ${vBarChart(baseRows.map(([,d],i) => ({label: baseLabels[i], value: d.roc_auc, color: baseColors[i]})), {max: 1, format: v => v.toFixed(3), title: "ROC-AUC"})}
+    </div>
+  `;
+
+  const cvRows = Object.entries(m.cv.table);
+  document.querySelector("#cv-table tbody").innerHTML = cvRows.map(([name, d], i) => `
+    <tr${i === cvRows.length - 1 ? ' class="highlight"' : ''}><td>${name}</td>
+      <td class="num tabular">${d.auc_mean.toFixed(4)} ± ${d.auc_std.toFixed(4)}</td>
+      <td class="num tabular">${fmtPct(d.acc_mean)} ± ${(d.acc_std*100).toFixed(2)}pp</td></tr>
+  `).join("");
+
+  const cvColors = ["#B8B09A", "#8A95A6", "#8A95A6", "#2F7D6B"];
+  document.getElementById("cv-chart").innerHTML = `<div class="chart-card">${
+    vBarChart(cvRows.map(([name,d],i) => ({
+      label: name.replace(" (default)", ""), value: d.auc_mean, color: cvColors[i],
+      errHigh: d.auc_mean + d.auc_std, errLow: Math.max(0, d.auc_mean - d.auc_std),
+    })), {max: 1, format: v => v.toFixed(3), title: "ROC-AUC (mean ± std)", height: 240})
+  }</div>`;
+
+  document.getElementById("transition-text").textContent =
+    `Companies rarely flip health state: At-Risk stays At-Risk ${fmtPct(m.transition_matrix.at_risk_stays_at_risk)} of the time, ` +
+    `Healthy stays Healthy ${fmtPct(m.transition_matrix.healthy_stays_healthy)} of the time. This is where the model earns its value.`;
+  document.getElementById("ew-lift").textContent = `${m.early_warning.lift.toFixed(2)}x (within-group AUC ${m.early_warning.within_group_auc})`;
+  document.getElementById("rec-lift").textContent = `${m.recovery.lift.toFixed(2)}x (within-group AUC ${m.recovery.within_group_auc})`;
+
+  document.getElementById("concentration-note").textContent = m.feature_concentration_note;
+  document.getElementById("importance-chart").innerHTML = `<div class="chart-card">${
+    hBarChart(m.permutation_importance.map(f => ({label: f.feature, value: f.importance, color: "#14213D"})), {format: v => v.toFixed(3)})
+  }</div>`;
+
+  document.querySelector("#subgroup-table tbody").innerHTML = m.subgroup_performance.map(s => `
+    <tr><td>${s.sector.replace("_", " / ")}</td><td class="num tabular">${s.n.toLocaleString()}</td><td class="num tabular">${fmtPct(s.accuracy)}</td><td class="num tabular">${s.roc_auc.toFixed(3)}</td></tr>
+  `).join("");
+}
+render().catch(e => { document.querySelector('.shell').insertAdjacentHTML('beforeend', `<p style="color:var(--atrisk)">Failed to load metrics: ${e.message}</p>`); });
+</script>
+</body>
+</html>

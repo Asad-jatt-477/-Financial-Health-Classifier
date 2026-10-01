@@ -1,0 +1,17 @@
+,auc_drop_mean,auc_drop_std,low_relevance
+current_ratio,0.18996,0.00536,False
+cash_ratio,0.00032,0.00021,False
+debt_to_equity,0.00081,0.00043,False
+debt_to_assets,0.00106,0.00052,False
+gross_margin,0.00016,0.00024,True
+operating_margin,0.0236,0.00307,False
+net_profit_margin,0.0016,0.00051,False
+roa,0.1534,0.01168,False
+roe,0.00153,0.00047,False
+asset_turnover,0.00047,9e-05,False
+revenue_growth_qoq,0.00082,0.00014,False
+netincome_growth_qoq,0.01242,0.00142,False
+assets_growth_qoq,0.00062,0.00036,False
+is_annual_filing,0.00047,0.00024,False
+has_inventory,0.0001,9e-05,False
+industry_sector,0.00313,0.00106,False

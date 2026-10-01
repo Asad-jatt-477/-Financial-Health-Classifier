@@ -1,0 +1,65 @@
+{
+  "generated_by": "12_model_validation_and_persistence.ipynb",
+  "cv": {
+    "folds": 5,
+    "scheme": "GroupKFold by company (train companies only)",
+    "table": {
+      "Majority": {
+        "AUC_mean": 0.5,
+        "AUC_std": 0.0,
+        "ACC_mean": 0.6482,
+        "ACC_std": 0.0146
+      },
+      "Persistence": {
+        "AUC_mean": 0.8573,
+        "AUC_std": 0.0069,
+        "ACC_mean": 0.8718,
+        "ACC_std": 0.0068
+      },
+      "LogisticRegression": {
+        "AUC_mean": 0.8184,
+        "AUC_std": 0.0013,
+        "ACC_mean": 0.7476,
+        "ACC_std": 0.007
+      },
+      "HGB (default)": {
+        "AUC_mean": 0.9427,
+        "AUC_std": 0.0036,
+        "ACC_mean": 0.8857,
+        "ACC_std": 0.0055
+      }
+    }
+  },
+  "tuning": {
+    "best_params_search": {
+      "min_samples_leaf": 100,
+      "max_iter": 100,
+      "max_depth": null,
+      "learning_rate": 0.05,
+      "l2_regularization": 0.1
+    },
+    "search_best_3fold_auc": 0.9418,
+    "tuned_5fold_auc": 0.9428,
+    "default_5fold_auc": 0.9427,
+    "paired_diff": 0.0001,
+    "paired_se": 0.0002,
+    "adopted_tuned_params": false
+  },
+  "final_model_test": {
+    "accuracy": 0.8762,
+    "balanced_accuracy": 0.8653,
+    "roc_auc": 0.9367
+  },
+  "persistence_test": {
+    "accuracy": 0.86,
+    "roc_auc": 0.8449
+  },
+  "majority_test": {
+    "accuracy": 0.6532
+  },
+  "artifacts": [
+    "feature_config.json",
+    "health_classifier.joblib",
+    "winsorization_bounds.json"
+  ]
+}
