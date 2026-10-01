@@ -11,6 +11,8 @@
   <img alt="License" src="https://img.shields.io/badge/License-MIT-lightgrey">
 </p>
 
+**🔗 Live Demo: https://financial-health-classifier.vercel.app**
+
 ---
 
 ## Overview
