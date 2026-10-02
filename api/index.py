@@ -1,4 +1,4 @@
-﻿"""
+"""
 FastAPI backend for the Cross-Industry Corporate Financial Health Classifier.
 Deployed on Vercel as a serverless function; served under /api/*.
 """
@@ -9,7 +9,14 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from model_utils import predict as run_prediction, get_config, get_bounds, NUMERIC_FEATURES
+import sys
+
+# Vercel loads this file by path, so api/ is NOT on sys.path there (locally,
+# local_test_server.py adds it). Add this file's own folder so the sibling
+# module model_utils.py can be imported in both environments.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from model_utils import predict as run_prediction, get_config, get_bounds, NUMERIC_FEATURES  # noqa: E402
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 

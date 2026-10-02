@@ -1,4 +1,4 @@
-﻿const FIELD_META = {
+const FIELD_META = {
   current_ratio:       { label: "Current Ratio",        group: "group-liquidity", fallback: [0, 5],    step: 0.01, help: "Current Assets ÷ Current Liabilities" },
   cash_ratio:          { label: "Cash Ratio",            group: "group-liquidity", fallback: [0, 3],    step: 0.01, help: "Cash ÷ Current Liabilities" },
   debt_to_equity:      { label: "Debt-to-Equity",        group: "group-liquidity", fallback: [-2, 6],   step: 0.01 },

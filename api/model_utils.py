@@ -1,4 +1,4 @@
-﻿"""
+"""
 Model loading + prediction helpers for the Vercel serverless function.
 Deliberately pandas-free: a plain numpy array in the exact trained column
 order gives byte-identical predictions to a DataFrame (verified), and
