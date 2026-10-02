@@ -74,6 +74,9 @@ flowchart LR
 ### Model Performance
 ![Performance page](docs/screenshots/performance.png)
 
+### Cross-Validation & Transition Analysis
+![Cross-validation results](docs/screenshots/performance-cv.png)
+
 ## 💡 Benefits
 
 - **Early warning for decision-makers** — investors, credit analysts and lenders can flag companies likely to slip into financial stress one quarter ahead.

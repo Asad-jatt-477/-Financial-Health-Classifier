@@ -24,3 +24,8 @@ Thumbs.db
 # Logs / temp
 *.log
 *.tmp
+
+.vercel
+.env*
+
+docs/screenshots/raw/
